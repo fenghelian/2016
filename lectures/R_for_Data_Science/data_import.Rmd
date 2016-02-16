@@ -18,7 +18,7 @@ The are several function in the base package available for reading data. A Googl
 
 From the help file we see that we need that we need 
 
-> the name of the file which the data are to be read from. Each row of the table appears as one line of the file. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see file).
+> the name of the file which the data are to be read from. Each row of the table appears as one line of the file. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see file).setwd(): set working directory
 
 #### Paths and the Working Directory
 
@@ -58,25 +58,14 @@ dat <- read.csv("bio260_heights.csv")
 
 If you did not receive any message, then you probably read in the file successfully.
 
-#### Option 2: Read from within R 
+#### Option 2: Download from within R 
 
 We store many of the datasets used here on [GitHub](https://github.com/datasciencelabs/2016_data). You can actually read these files directly to your R session in the following way:
 
 ```{r,message=FALSE}
-filename <- "https://raw.githubusercontent.com/datasciencelabs/2016_data/master/bio260_heights.csv"
-dat <- read.csv(filename)
+url <- "https://raw.githubusercontent.com/datasciencelabs/data/master/bio260_heights.csv"
+dat <- read.csv(url)
 ```
 
-#### Option 3: Download from within R 
 
-Although option 2 is very convenient, you may want to have the data file on your hard disk. For example, this gives you complete control of the reproducibility of your ananlysis. In option 1 downloaded the file using a browser, but you can do this from within R using the `downloader` package.
 
-```{r}
-library(downloader)
-url <- "https://raw.githubusercontent.com/datasciencelabs/2016_data/master/bio260_heights.csv"
-filename <- basename(url)
-download(url,filename)
-dat <- read.csv(filename)
-```
-
- 

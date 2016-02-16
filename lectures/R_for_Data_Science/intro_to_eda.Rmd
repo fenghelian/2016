@@ -1,6 +1,6 @@
 ---
 title: "Distributions and basic exploratory data analysis"
-output: pdf_document
+output: html_document
 ---
 
 ```{r,echo=FALSE, warning=FALSE}
@@ -15,14 +15,21 @@ fixheight <- function(x){
 
 suppressMessages(library(dplyr))
 suppressMessages(library(readr))
-url <- "https://raw.githubusercontent.com/datasciencelabs/2016_data/master/bio260_heights.csv"
+url <- "https://raw.githubusercontent.com/datasciencelabs/data/master/bio260_heights.csv"
 dat <- read_csv(url)
 names(dat) <- c("time","gender","height")
-dat <- mutate(dat,height=gsub("ft","'",height) ) %>%  mutate(height= gsub("\"|inches|\ ","",height) ) %>% mutate(height=fixheight(height)) 
+dat <- mutate(dat, numeric_height=as.numeric(height),
+              original=height) %>% 
+  mutate(height= gsub("ft","'",height) ) %>%
+  mutate(height= gsub("\"|inches|\ ","",height) ) %>% 
+  mutate(height=fixheight(height)) %>% select(-numeric_height)
 ```
 
 
 Assessment: Read in the data [here]("https://raw.githubusercontent.com/datasciencelabs/2016_data/master/bio260_heights.csv"). Use the `filter` function to determine how many males and females we have.
+
+dim(filter(dat, dat$gender=="Female"))
+dim(filter(dat, dat$gender=="Male"))
 
 Assessment: Use filter and select to obtain a `data.frame` with just male heights. How many NAs do we have when we convert them to numeric?
 
@@ -103,7 +110,7 @@ dat <- mutate(dat, height=ifelse(height>96, height/2.54, height))
 
 Now let's see what outliers remain:
 ```{r}
-filter(dat, height>96 | height < 12) %>% select(height)
+filter(dat, height>96 | height < 12) %>% select(original)
 ```
 
 These values appear to use the format $x.y$ with $x$ feet and $y$ inches. Note that these are not numbers. In particualr note that $5.11$ is larger than $5.5$. We also not a particularly strange entry which we will just assume is $5.5$:
@@ -120,7 +127,7 @@ dat <- mutate(dat, height=ifelse(height>12, height, floor(height)*12+(height-flo
 
 Let's confirm that we have removed all the outliers:
 ```{r}
-filter(dat, height>96 | height < 12) %>% select(height)
+filter(dat, height>96 | height < 12) %>% select(original)
 ```
 
 The histogram looks more like the general population now
@@ -212,12 +219,22 @@ pnorm(3)-pnorm(-3)
 ```
 
 
-Assessment: Use the normal approximation to determine what proportion of US men are as tall or taller as Michael Jordan? 
+Assessment: Use the normal approximation to determine what proportion of US men are as tall as Michael Jordan?6'6=78 
+```{r}
+1-pnorm(78,mu,sigma)
+```
 
 
-Assessment: In the US, how many more 6'6 or taller men are there than 7 foot or taller? Compute a proportion.
 
-Assessment:  What proportion of 7 footers (in the world) are in the NBA? Hint: There are 36 7 footers in the NBA. Hint 2: The average height of men 18-35 is  68.5 and SD 3 inches and is approximately normal?
+
+Assessment: In the US, how many time more 6'6 men are there than 7 footers?
+```{r}
+(1-pnorm(84,mu,sigma))/(1-pnorm(78,sigma))
+```
+
+
+
+Assessment:  What proportion of 7 footers are in the NBA? Hint: There are 36 7 footers in the NBA. Hint 2: The average height of men 18-35 is  68.5 and SD 3 inches and is approximately normal? total :1.25 bilion 
 
 ## Quantile Quantile Plots
 
